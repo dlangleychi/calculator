@@ -1,1 +1,1 @@
-# calculator
+Attempt The Odin Project "Project: Calculator".
