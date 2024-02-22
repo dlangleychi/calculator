@@ -17,8 +17,8 @@ body {
     padding: 2px;
     border: 10px solid rgb(71, 68, 68);
     background-color: black;
-    width: 400px;
-    height: 500px;
+    width: 500px;
+    height: 700px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -67,6 +67,7 @@ body {
     border-radius: 15%;
 }
 
+
 .operator-button {
     background-color: orange;
 }
@@ -77,6 +78,17 @@ body {
 
 .number-button {
     background-color: rgb(92, 180, 151);
+}
+
+/* copied from stackoverflow */
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Old versions of Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Edge, Opera and Firefox */
 }
 
 #number-0 {
