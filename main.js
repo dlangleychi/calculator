@@ -3,6 +3,7 @@ const MAX_LENGTH = 12;
 const ROUND_DIGITS = 12;
 const MAX_DENOM = 10 ** 8;
 const DECIMAL_PLACES = 4;
+const SNARKY_MESSAGE = 'DIV BY ZERO';
 
 const display =  document.querySelector('.display');
 
@@ -21,6 +22,12 @@ const period =  document.querySelector('#period');
 const allClear =  document.querySelector('#ac');
 const plusMinus =  document.querySelector('#plus-minus');
 const percent =  document.querySelector('#percent');
+
+const divideButton = document.querySelector('#divide-button');
+const multiplyButton = document.querySelector('#multiply-button');
+const subtractButton = document.querySelector('#subtract-button');
+const addButton = document.querySelector('#add-button');
+const equalsButton = document.querySelector('#equals-button');
 
 const add = (a, b) => a + b;
 const subtract = (a, b) => a - b;
@@ -44,6 +51,14 @@ const operate = (op, num1, num2) => {
         case '*':
             return multiply(num1, num2);
         case '/':
+            console.log('divide');
+            if (num2 === 0) {
+                console.log('divide zero');
+                display.textContent = SNARKY_MESSAGE;
+                clearDisplayValue();
+                clearStack();
+                return;
+            }
             return divide(num1, num2);
         default:
             return 'ERROR';
@@ -59,20 +74,27 @@ const clearDisplayValue = () => {
     addDenom = 1;
 }
 
+const clearStack = () => {
+    num1 = undefined;
+    num2 = undefined;
+    operator = undefined;
+}
+
 const addDisplayCharacter = (digit) => {
+    let delta = (displayValue >= 0) ? +digit : -digit;
     if (hasPeriod) {
         addDenom *= 10;
         if (addDenom < MAX_DENOM)
-            displayValue += (+digit)/addDenom;
+            displayValue += delta/addDenom;
     }
-    else displayValue = 10 * displayValue + (+digit);
+    else displayValue = 10 * displayValue + delta;
     updateDisplay();
 };
 
 const updateDisplay = () => {
+    if (display.textContent === SNARKY_MESSAGE) return;
     console.log(displayValue);
     let stringDisplay = roundNumber(displayValue).toString();
-    // console.log(stringDisplay);
     if(stringDisplay.length > MAX_LENGTH) 
         stringDisplay = displayValue.toExponential(DECIMAL_PLACES); 
     else if(hasPeriod && !(stringDisplay.includes('.')))
@@ -97,10 +119,9 @@ period.addEventListener('click', () => {
 });
 
 allClear.addEventListener('click', () => {
+    display.textContent = '';
     clearDisplayValue();
-    num1 = undefined;
-    num2 = undefined;
-    operator = undefined;
+    clearStack();
     updateDisplay();
 });
 
@@ -110,14 +131,89 @@ plusMinus.addEventListener('click', () => {
 });
 
 percent.addEventListener('click', () => {
+    if (displayValue % 100 != 0) hasPeriod = true;
     displayValue /= 100;
+    if (hasPeriod) addDenom *= 100;
     updateDisplay();
 });
 
 //put listeners for operations
 
+addButton.addEventListener('click', () => {
+    if (num1 === undefined) {
+        num1 = displayValue;
+        operator = '+';
+        clearDisplayValue();
+    }
+    else {
+        num2 = displayValue;
+        displayValue = operate(operator, num1, num2);
+        num1 = displayValue;
+        operator = '+';
+        updateDisplay();
+        clearDisplayValue();
+    }
+});
+
+subtractButton.addEventListener('click', () => {
+    if (num1 === undefined) {
+        num1 = displayValue;
+        operator = '-';
+        clearDisplayValue();
+    }
+    else {
+        num2 = displayValue;
+        displayValue = operate(operator, num1, num2);
+        num1 = displayValue;
+        operator = '-';
+        updateDisplay();
+        clearDisplayValue();
+    }
+});
+
+multiplyButton.addEventListener('click', () => {
+    if (num1 === undefined) {
+        num1 = displayValue;
+        operator = '*';
+        clearDisplayValue();
+    }
+    else {
+        num2 = displayValue;
+        displayValue = operate(operator, num1, num2);
+        num1 = displayValue;
+        operator = '*';
+        updateDisplay();
+        clearDisplayValue();
+    }
+});
+
+divideButton.addEventListener('click', () => {
+    if (num1 === undefined) {
+        num1 = displayValue;
+        operator = '/';
+        clearDisplayValue();
+    }
+    else {
+        num2 = displayValue;
+        displayValue = operate(operator, num1, num2);
+        num1 = displayValue;
+        operator = '/';
+        updateDisplay();
+        clearDisplayValue();
+    }
+});
+
+equalsButton.addEventListener('click', () => {
+    if (num1 !== undefined) {
+        num2 = displayValue;
+        displayValue = operate(operator, num1, num2);
+        updateDisplay();
+        clearStack();
+    }
+});
+
+
 window.addEventListener('DOMContentLoaded', () => {
     clearDisplayValue();
-    // clear state?
     updateDisplay();
 });
